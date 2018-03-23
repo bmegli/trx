@@ -32,7 +32,7 @@
 
 static unsigned int verbose = DEFAULT_VERBOSE;
 
-static void timestamp_jump(RtpSession *session, ...)
+static void timestamp_jump(RtpSession *session, void *arg1, void *arg2, void *arg3)
 {
 	if (verbose > 1)
 		fputc('|', stderr);
