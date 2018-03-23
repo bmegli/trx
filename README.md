@@ -25,3 +25,20 @@ more than a few milliseconds is possible.
 The forks on github origin from https://github.com/eugenehp/trx which:
 - didn't keep original trx development history
 - missed some last improvements by Mark Hills
+
+# Building
+
+## Dependencies
+
+``` bash
+sudo apt-get update
+sudo apt-get install libopus-dev libortp-dev
+```
+
+## Code
+
+```bash
+git clone https://github.com/bmegli/trx.git
+cd trx
+make
+```
