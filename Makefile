@@ -12,9 +12,8 @@ CFLAGS += -MMD -Wall
 LDLIBS_ASOUND ?= -lasound
 LDLIBS_OPUS ?= -lopus
 LDLIBS_ORTP ?= -lortp
-LDLIBS_BCTOOLBOX ?= -lbctoolbox
 
-LDLIBS += $(LDLIBS_ASOUND) $(LDLIBS_OPUS) $(LDLIBS_ORTP) $(LDLIBS_BCTOOLBOX)
+LDLIBS += $(LDLIBS_ASOUND) $(LDLIBS_OPUS) $(LDLIBS_ORTP)
 
 .PHONY:		all install dist clean
 
