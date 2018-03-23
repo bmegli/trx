@@ -32,7 +32,7 @@ The forks on github origin from https://github.com/eugenehp/trx which:
 
 ``` bash
 sudo apt-get update
-sudo apt-get install libopus-dev libortp-dev
+sudo apt-get install libopus-dev libortp-dev libasound2-dev
 ```
 
 ## Code
