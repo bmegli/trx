@@ -45,6 +45,9 @@ static RtpSession* create_rtp_recv(const char *addr_desc, const int port,
 	RtpSession *session;
 
 	session = rtp_session_new(RTP_SESSION_RECVONLY);
+
+	rtp_session_enable_rtcp(session,FALSE);
+
 	rtp_session_set_scheduling_mode(session, FALSE);
 	rtp_session_set_blocking_mode(session, FALSE);
 	rtp_session_set_local_addr(session, addr_desc, port, -1);
@@ -113,20 +116,23 @@ static int run_rx(RtpSession *session,
 		char buf[32768];
 		void *packet;
 
+		printf("rtp_session_recv\n");
 		r = rtp_session_recv_with_ts(session, (uint8_t*)buf,
 				sizeof(buf), ts, &have_more);
 		assert(r >= 0);
 		assert(have_more == 0);
 		if (r == 0) {
+		printf("r==0\n");
 			packet = NULL;
 			if (verbose > 1)
 				fputc('#', stderr);
 		} else {
+		printf("packet=buf\n");
 			packet = buf;
 			if (verbose > 1)
 				fputc('.', stderr);
 		}
-
+		printf("play one frame\n");
 		r = play_one_frame(packet, r, decoder, snd, channels);
 		if (r == -1)
 			return -1;
@@ -227,6 +233,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	printf("opus_decoder_create\n");
 	decoder = opus_decoder_create(rate, channels, &error);
 	if (decoder == NULL) {
 		fprintf(stderr, "opus_decoder_create: %s\n",
@@ -234,27 +241,37 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+	printf("ortp init\n");
 	ortp_init();
+	printf("ortp scheduler init\n");
 	ortp_scheduler_init();
+	printf("crate_rtp_recv\n");
 	session = create_rtp_recv(addr, port, jitter);
 	assert(session != NULL);
 
+	printf("snd_pcm_open\n");
 	r = snd_pcm_open(&snd, device, SND_PCM_STREAM_PLAYBACK, 0);
 	if (r < 0) {
 		aerror("snd_pcm_open", r);
 		return -1;
 	}
+
+	printf("set_alsa_hw\n");
 	if (set_alsa_hw(snd, rate, channels, buffer * 1000) == -1)
 		return -1;
+	printf("set_alsa_sw\n");
 	if (set_alsa_sw(snd) == -1)
 		return -1;
 
 	if (pid)
 		go_daemon(pid);
 
+	printf("go_realtime\n");
 	go_realtime();
+	printf("run_rx\n");
 	r = run_rx(session, decoder, snd, channels, rate);
 
+	printf("snd_pcm_close and closing follows\n");
 	if (snd_pcm_close(snd) < 0)
 		abort();
 
