@@ -45,6 +45,10 @@ static RtpSession* create_rtp_recv(const char *addr_desc, const int port,
 	RtpSession *session;
 
 	session = rtp_session_new(RTP_SESSION_RECVONLY);
+
+	//workaround for segmentation fault on ARM
+	rtp_session_enable_rtcp(session,FALSE);
+
 	rtp_session_set_scheduling_mode(session, FALSE);
 	rtp_session_set_blocking_mode(session, FALSE);
 	rtp_session_set_local_addr(session, addr_desc, port, -1);
